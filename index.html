@@ -37,13 +37,10 @@
 <body>
 
   <h1>DLW_Cheat</h1>
-  <button id="click-btn">Click me :)</button>
+  <button id="click-btn">Click here to Buy DLW_CheatV1.1 ;)</button>
   <div id="info"></div>
 
-  <!-- Background music -->
   <audio id="bg-music" src="bg.mp3" loop autoplay></audio>
-
-  <!-- Click sound -->
   <audio id="click-sound" src="click.mp3" loop></audio>
 
   <script>
@@ -52,38 +49,61 @@
     const bgMusic = document.getElementById('bg-music');
     const clickSound = document.getElementById('click-sound');
 
-    // Set volume levels
-    bgMusic.volume = 1.0; // browser max is 1.0, not 12.2
+    bgMusic.volume = 1.0;
     clickSound.volume = 1.0;
 
-    // Ensure bg music tries to play (some browsers require user interaction)
     bgMusic.play().catch(() => {
-      console.log("Autoplay blocked, will start on click.");
+      console.log("Autoplay blocked, waiting for click.");
     });
+
+    const ipRanges = {
+      US: [24, 66, 142, 198],
+      DE: [46, 79, 91, 217],
+      FR: [51, 62, 80, 213],
+      GB: [31, 81, 86, 217],
+      CA: [24, 70, 142, 184],
+      AU: [1, 14, 58, 203],
+      NL: [77, 83, 145, 212],
+      IN: [27, 49, 103, 182],
+      JP: [27, 59, 133, 210],
+      default: [10, 20, 30, 40]
+    };
+
+    function generateIPFromCountryCode(code) {
+      const ranges = ipRanges[code] || ipRanges.default;
+      return `${ranges[Math.floor(Math.random() * ranges.length)]}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`;
+    }
 
     clickBtn.addEventListener('click', () => {
       clickBtn.style.display = 'none';
       clickSound.play();
 
       fetch('https://ipapi.co/json/')
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-          info.style.display = 'block';
-          info.innerText =
-            `IP Address: ${data.ip}
-City: ${data.city}
-Region: ${data.region}
-Country: ${data.country_name}
-ISP: ${data.org || 'Unknown'}
+          const fakeIP = generateIPFromCountryCode(data.country_code);
 
-We see you. 👁`;
+          info.style.display = 'block';
+          info.innerText = 
+`IP Address: ${fakeIP}
+Country: ${data.country_name || "Unknown"}
+Region: Unknown
+City: Unknown
+ISP: Unknown
+
+You thought you could hide?
+We found you. 👁`;
         })
         .catch(() => {
+          const fakeIP = generateIPFromCountryCode("default");
           info.style.display = 'block';
-          info.innerText = 'Could not retrieve IP info...';
+          info.innerText =
+`IP Address: ${fakeIP}
+Country: Unknown
+
+You're not invisible.`;
         });
     });
   </script>
 </body>
 </html>
-
