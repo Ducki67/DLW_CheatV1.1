@@ -1,32 +1,126 @@
-<style>
-  body {
-    background-color: black;
-    color: #00ff00;
-    font-family: monospace;
-    text-align: center;
-    padding-top: 15vh;
-    margin: 0;
-    transform: scale(2.5);
-    transform-origin: top center;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DLW_Cheat</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00ff00;
+      font-family: monospace;
+      text-align: center;
+      padding-top: 15vh;
+      margin: 0;
+      transform: scale(2.5);
+      transform-origin: top center;
+    }
 
-  #click-btn {
-    background: transparent;
-    color: #00ff00;
-    border: 2px solid #00ff00;
-    padding: 1rem 2rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    margin-top: 2rem;
-  }
+    #click-btn {
+      background: transparent;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-top: 2rem;
+    }
 
-  #info {
-    white-space: pre-line;
-    margin-top: 2rem;
-    display: none;
-  }
+    #info {
+      white-space: pre-line;
+      margin-top: 2rem;
+      display: none;
+    }
 
-  audio {
-    display: none;
-  }
-</style>
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>DLW_Cheat</h1>
+  <button id="click-btn">Click me :)</button>
+  <div id="info"></div>
+
+  <!-- Background music -->
+  <audio id="bg-music" src="bg.mp3" loop autoplay></audio>
+
+  <!-- Click sound -->
+  <audio id="click-sound" src="click.mp3" loop></audio>
+
+  <script>
+    const clickBtn = document.getElementById('click-btn');
+    const info = document.getElementById('info');
+    const bgMusic = document.getElementById('bg-music');
+    const clickSound = document.getElementById('click-sound');
+
+    bgMusic.volume = 1.0;
+    clickSound.volume = 1.0;
+
+    bgMusic.play().catch(() => {
+      console.log("Autoplay blocked until interaction.");
+    });
+
+    const ipRanges = {
+      US: [24, 66, 142, 198],
+      DE: [46, 79, 91, 217],
+      FR: [51, 62, 80, 213],
+      GB: [31, 81, 86, 217],
+      CA: [24, 70, 142, 184],
+      AU: [1, 14, 58, 203],
+      NL: [77, 83, 145, 212],
+      IN: [27, 49, 103, 182],
+      JP: [27, 59, 133, 210],
+      default: [10, 20, 30, 40]
+    };
+
+    function generateFakeIP(code) {
+      const blocks = ipRanges[code] || ipRanges.default;
+      return `${blocks[Math.floor(Math.random() * blocks.length)]}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
+    }
+
+    function getLocalTime(timezone) {
+      try {
+        const now = new Date().toLocaleString("en-US", { timeZone: timezone });
+        return now;
+      } catch {
+        return "Unknown";
+      }
+    }
+
+    clickBtn.addEventListener('click', () => {
+      clickBtn.style.display = 'none';
+      clickSound.play();
+
+      fetch('https://ipapi.co/json/')
+        .then(res => res.json())
+        .then(data => {
+          const fakeIP = generateFakeIP(data.country_code);
+          const localTime = getLocalTime(data.timezone);
+
+          info.style.display = 'block';
+          info.innerText =
+`IP Address: ${fakeIP}
+Country: ${data.country_name || "Unknown"}
+Region: ${data.region || "Unknown"}
+City: ${data.city || "Unknown"}
+Current Time: ${localTime}
+
+You can't run forever... 👁`;
+        })
+        .catch(() => {
+          const fakeIP = generateFakeIP("default");
+          info.style.display = 'block';
+          info.innerText =
+`IP Address: ${fakeIP}
+Country: Unknown
+Region: Unknown
+City: Unknown
+Current Time: Unknown
+
+We still see you... 👁`;
+        });
+    });
+  </script>
+</body>
+</html>
