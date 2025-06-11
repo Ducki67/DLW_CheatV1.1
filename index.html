@@ -1,109 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>DLW_Cheat</title>
-  <style>
-    body {
-      background-color: black;
-      color: #00ff00;
-      font-family: monospace;
-      text-align: center;
-      padding-top: 15vh;
-      margin: 0;
-    }
+<style>
+  body {
+    background-color: black;
+    color: #00ff00;
+    font-family: monospace;
+    text-align: center;
+    padding-top: 15vh;
+    margin: 0;
+    transform: scale(2.5);
+    transform-origin: top center;
+  }
 
-    #click-btn {
-      background: transparent;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      padding: 1rem 2rem;
-      font-size: 1.5rem;
-      cursor: pointer;
-      margin-top: 2rem;
-    }
+  #click-btn {
+    background: transparent;
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-top: 2rem;
+  }
 
-    #info {
-      white-space: pre-line;
-      margin-top: 2rem;
-      display: none;
-    }
+  #info {
+    white-space: pre-line;
+    margin-top: 2rem;
+    display: none;
+  }
 
-    audio {
-      display: none;
-    }
-  </style>
-</head>
-<body>
-
-  <h1>DLW_Cheat</h1>
-  <button id="click-btn">Click here to Buy DLW_CheatV1.1 ;)</button>
-  <div id="info"></div>
-
-  <audio id="bg-music" src="bg.mp3" loop autoplay></audio>
-  <audio id="click-sound" src="click.mp3" loop></audio>
-
-  <script>
-    const clickBtn = document.getElementById('click-btn');
-    const info = document.getElementById('info');
-    const bgMusic = document.getElementById('bg-music');
-    const clickSound = document.getElementById('click-sound');
-
-    bgMusic.volume = 1.0;
-    clickSound.volume = 1.0;
-
-    bgMusic.play().catch(() => {
-      console.log("Autoplay blocked, waiting for click.");
-    });
-
-    const ipRanges = {
-      US: [24, 66, 142, 198],
-      DE: [46, 79, 91, 217],
-      FR: [51, 62, 80, 213],
-      GB: [31, 81, 86, 217],
-      CA: [24, 70, 142, 184],
-      AU: [1, 14, 58, 203],
-      NL: [77, 83, 145, 212],
-      IN: [27, 49, 103, 182],
-      JP: [27, 59, 133, 210],
-      default: [10, 20, 30, 40]
-    };
-
-    function generateIPFromCountryCode(code) {
-      const ranges = ipRanges[code] || ipRanges.default;
-      return `${ranges[Math.floor(Math.random() * ranges.length)]}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`;
-    }
-
-    clickBtn.addEventListener('click', () => {
-      clickBtn.style.display = 'none';
-      clickSound.play();
-
-      fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-          const fakeIP = generateIPFromCountryCode(data.country_code);
-
-          info.style.display = 'block';
-          info.innerText = 
-`IP Address: ${fakeIP}
-Country: ${data.country_name || "Unknown"}
-Region: Unknown
-City: Unknown
-ISP: Unknown
-
-You thought you could hide?
-We found you. 👁`;
-        })
-        .catch(() => {
-          const fakeIP = generateIPFromCountryCode("default");
-          info.style.display = 'block';
-          info.innerText =
-`IP Address: ${fakeIP}
-Country: Unknown
-
-You're not invisible.`;
-        });
-    });
-  </script>
-</body>
-</html>
+  audio {
+    display: none;
+  }
+</style>
